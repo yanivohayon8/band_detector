@@ -6,24 +6,100 @@ import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import MultiPoint,Point
 from src.loader import RdpDataloader
+from src import preprocess as pr
+import math
 
 
 class TestHoughSimpleExamples(unittest.TestCase):
 
     simple_img_path = "data/images/simple_example.png"
 
-    def test_lines(self):
-        img = cv2.imread(self.simple_img_path,0)
-        lines = hough.detect_hough_lines(img,minimum_votes=400)
-        img = cv2.cvtColor(img,cv2.COLOR_GRAY2RGB)
+    def test_lines_toy_example(self):
+        img = cv2.imread(self.simple_img_path)
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        edge_map = cv2.Canny(img,70,150)
+        lines = hough.detect_hough_lines(edge_map,minimum_votes=75)
+
+        x1=0
+        y2 = img.shape[1] # because of the image size
+        x3 = img.shape[0]
+        y4 = 0
 
         for line in lines:
-            point1,point2 = line.sample_two_points(distance=50)
-            cv2.line(img,point1,point2,(255,0,0))
+            y1 = line.sample_point_at_x(x1)
 
-        plt.imshow(img,cmap="gray")
+            if not math.isnan(y1):
+                y1 = int(y1)
+
+            x2 = line.sample_point_at_y(y2)
+
+            if not math.isnan(x2):
+                x2 = int(x2)
+
+            y3 = line.sample_point_at_x(x3)
+
+            if not math.isnan(y3):
+                y3 = int(y3)
+
+
+            x4 = line.sample_point_at_y(y4)
+
+            if not math.isnan(x4):
+                x4 = int(x4)
+
+            
+            crossing_bounds = [(x1,y1),(x2,y2),(x3,y3),(x4,y4)]
+            points = []
+
+            for point in crossing_bounds:
+
+                if point[0] <= img.shape[0] and point[0]>=0:
+                    if point[1] <= img.shape[1] and point[1]>=0:
+                        points.append(point)
+
+
+            # if it is a noise?
+            if len(points)<2:
+                print ("Warning, line must touch the image borders")
+                continue
+
+            cv2.line(img,points[0],points[1],(0,0,255))
+            # point1,point2 = line.sample_two_points(distance=50)
+            # cv2.line(img,point1,point2,(0,0,255))
+
+        plt.imshow(img)
         plt.close()
         pass
+
+    def test_lines_randomly_toy_example(self):
+        img = cv2.imread(self.simple_img_path)
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        edge_map = cv2.Canny(img,70,150)
+        lines = hough.detect_hough_lines_randomly(edge_map,minimum_votes=75)
+        
+        for line in lines:
+            cv2.line(img,line[0],line[1],(0,0,255))
+            # point1,point2 = line.sample_two_points(distance=50)
+            # cv2.line(img,point1,point2,(0,0,255))
+
+        plt.imshow(img)
+        plt.close()
+
+    # def detect_lines_fragment(self,img_path):
+    #     img = cv2.imread(img_path)
+    #     img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    #     img_smoothed = pr.run_bilateral_filter(img)
+    #     img_normelized = img_smoothed/255.0 # put this inside the segment kmeans function (make a copy within it)
+    #     img_segmented = pr.segment_kmeans(img_normelized)
+    #     img_color_segmented = (img_segmented*255).astype(np.uint8)
+
+    #     img_segmented_gray = cv2.cvtColor(img_color_segmented,cv2.COLOR_RGB2GRAY)
+    #     img_edge_map = pr.canny(img_segmented_gray)
+    
+    # def test_detect_lines_RPf_00279(self):
+    #     img_name = "RPf_00279"
+    #     img_path = f"data/images/obj_images/{img_name}"
+    #     self.detect_lines_fragment(img_path)
 
     def test_bands(self):
         img = cv2.imread(self.simple_img_path,0)

@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from src.band_detectors import StraightBandsDetector
+from src.intact_surface_detectors import StraightBandsDetector
 import src.visualize as vs
 import numpy as np
 

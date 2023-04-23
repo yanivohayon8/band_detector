@@ -1,15 +1,20 @@
 import cv2
 import numpy as np
+import math
+
 
 class HoughLine():
-    def __init__(self,theta,radius) -> None:
+    def __init__(self,theta,rho) -> None:
         self.theta = theta
-        self.radius = radius
+        self.rho = rho
+        self.slope = -1 / np.tan(theta)
+        self.bias = rho / np.sin(theta)
         pass
     
     def __repr__(self) -> str:
-        return f"theta={self.theta},radius={self.radius}"
+        return f"theta={self.theta},radius={self.rho}"
 
+    # old - delete when refactoring
     def sample_two_points(self,distance = 1000):
         '''
             hough_theta - the theta that represent the line, according to the hough transform
@@ -17,10 +22,28 @@ class HoughLine():
             distance - the distance between the points
         '''
         a,b = np.cos(self.theta), np.sin(self.theta)
-        x0,y0 = a*self.radius, b*self.radius
+        x0,y0 = a*self.rho, b*self.rho
         x1,y1 = int(x0 + distance * (-b)), int(y0 + distance*a)
         x2,y2 = int(x0 - distance * (-b)), int(y0 - distance*a)
         return (x1,y1),(x2,y2)
+
+    def sample_point_at_x(self,x,bound=7000):
+        return (self.rho - x*np.cos(self.theta))/(np.sin(self.theta)+1e-6)
+        # y = self.slope*x + self.bias
+        
+        # if math.isnan(y):
+        #     y = bound
+        
+        # return y
+    
+    def sample_point_at_y(self,y,bound=7000):
+        return (self.rho - y*np.sin(self.theta))/(np.cos(self.theta)+1e-6)
+        # x = (y-self.bias)/self.slope
+
+        # # if math.isnan(x):
+        # #     x = bound
+        
+        # return x
 
 
 
@@ -46,6 +69,28 @@ class HoughBand():
     def get_width(self):
         return abs(self.line1.radius - self.line2.radius)
     
+
+def detect_hough_lines_randomly(img:np.ndarray,rho_resolution=1,theta_resolution=1,minimum_votes = 100):
+
+    if img.dtype != np.uint8:
+        img_copy = img.astype(np.uint8)
+    else:
+        img_copy = img
+
+    # set srcn and dstn as 0 to use the classical hough transform algorithm
+    lines =  cv2.HoughLinesP(img,rho_resolution,theta_resolution*np.pi/180,minimum_votes,0,0)
+
+    if lines is None:
+        return []
+    
+    lines_two_points = []
+    
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        lines_two_points.append([(x1,y1),(x2,y2)])
+    
+    return lines_two_points
+
 
 def detect_hough_lines(img:np.ndarray,rho_resolution=1,theta_resolution=1,minimum_votes = 100):
 

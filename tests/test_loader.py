@@ -21,8 +21,5 @@ class TestRdpLoader(unittest.TestCase):
         plt.close()
 
 
-
-
-
 if __name__ == "__main__":
     unittest.main()
