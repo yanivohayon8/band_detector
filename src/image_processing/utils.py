@@ -5,7 +5,6 @@ import numpy as np
 def run_bilateral_filter(img, diameter = 50,sigma_color = 200, sigma_space = 200):
     return cv2.bilateralFilter(img,diameter,sigma_color,sigma_space)
 
-
 def segment_kmeans(img, n_clusters=3,colors_pool=None,random_state=0):
     '''
         This function gets an images and color each pixel to the cluster it belongs according to the results of the kmeans algorithm
