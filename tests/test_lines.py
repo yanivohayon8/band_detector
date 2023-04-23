@@ -20,49 +20,10 @@ class TestHoughSimpleExamples(unittest.TestCase):
         edge_map = cv2.Canny(img,70,150)
         lines = hough.detect_hough_lines(edge_map,minimum_votes=75)
 
-        x1=0
-        y2 = img.shape[1] # because of the image size
-        x3 = img.shape[0]
-        y4 = 0
+        assert len(lines) == 3
 
         for line in lines:
-            y1 = line.sample_point_at_x(x1)
-
-            if not math.isnan(y1):
-                y1 = int(y1)
-
-            x2 = line.sample_point_at_y(y2)
-
-            if not math.isnan(x2):
-                x2 = int(x2)
-
-            y3 = line.sample_point_at_x(x3)
-
-            if not math.isnan(y3):
-                y3 = int(y3)
-
-
-            x4 = line.sample_point_at_y(y4)
-
-            if not math.isnan(x4):
-                x4 = int(x4)
-
-            
-            crossing_bounds = [(x1,y1),(x2,y2),(x3,y3),(x4,y4)]
-            points = []
-
-            for point in crossing_bounds:
-
-                if point[0] <= img.shape[0] and point[0]>=0:
-                    if point[1] <= img.shape[1] and point[1]>=0:
-                        points.append(point)
-
-
-            # if it is a noise?
-            if len(points)<2:
-                print ("Warning, line must touch the image borders")
-                continue
-
+            points = line.sample_two_points(img.shape[:2])
             cv2.line(img,points[0],points[1],(0,0,255))
             # point1,point2 = line.sample_two_points(distance=50)
             # cv2.line(img,point1,point2,(0,0,255))

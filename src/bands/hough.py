@@ -15,35 +15,56 @@ class HoughLine():
         return f"theta={self.theta},radius={self.rho}"
 
     # old - delete when refactoring
-    def sample_two_points(self,distance = 1000):
-        '''
-            hough_theta - the theta that represent the line, according to the hough transform
-            hough_radius - the radius that represent the line, according to the hough transform
-            distance - the distance between the points
-        '''
-        a,b = np.cos(self.theta), np.sin(self.theta)
-        x0,y0 = a*self.rho, b*self.rho
-        x1,y1 = int(x0 + distance * (-b)), int(y0 + distance*a)
-        x2,y2 = int(x0 - distance * (-b)), int(y0 - distance*a)
-        return (x1,y1),(x2,y2)
+    def sample_two_points(self,img_shape):
+        left_border_x=0
+        up_border_y = img_shape[1] # because of the image size
+        right_border_x = img_shape[0]
+        down_border_y = 0
 
-    def sample_point_at_x(self,x,bound=7000):
+        left_border_y = self.get_y(left_border_x)
+
+        if not math.isnan(left_border_y):
+            left_border_y = int(left_border_y)
+
+        up_border_x = self.get_x(up_border_y)
+
+        if not math.isnan(up_border_x):
+            up_border_x = int(up_border_x)
+
+        right_border_y = self.get_y(right_border_x)
+
+        if not math.isnan(right_border_y):
+            right_border_y = int(right_border_y)
+
+        down_border_x = self.get_x(down_border_y)
+
+        if not math.isnan(down_border_x):
+            down_border_x = int(down_border_x)
+        
+        crossing_bounds = [(left_border_x,left_border_y),
+                            (up_border_x,up_border_y),
+                            (right_border_x,right_border_y),
+                            (down_border_x,down_border_y)]
+        points = []
+
+        for point in crossing_bounds:
+
+            if point[0] <= img_shape[0] and point[0]>=0:
+                if point[1] <= img_shape[1] and point[1]>=0:
+                    points.append(point)
+
+        # if it is a noise?
+        if len(points)<2:
+            raise ("Warning, line must touch the image borders")
+        
+        return points
+                
+
+    def get_y(self,x,bound=7000):
         return (self.rho - x*np.cos(self.theta))/(np.sin(self.theta)+1e-6)
-        # y = self.slope*x + self.bias
-        
-        # if math.isnan(y):
-        #     y = bound
-        
-        # return y
     
-    def sample_point_at_y(self,y,bound=7000):
+    def get_x(self,y,bound=7000):
         return (self.rho - y*np.sin(self.theta))/(np.cos(self.theta)+1e-6)
-        # x = (y-self.bias)/self.slope
-
-        # # if math.isnan(x):
-        # #     x = bound
-        
-        # return x
 
 
 
