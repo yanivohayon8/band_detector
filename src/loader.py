@@ -13,6 +13,8 @@ import pandas as pd
 #         if type == "gray":
 #             return 
 
+IMAGE_WIDTH = 2064
+IMAGE_HEIGHT = 2064
 
 class RdpDataloader():
 
@@ -27,4 +29,5 @@ class RdpDataloader():
         xs = self.df["start_point_x"].values.tolist()
         ys = self.df["start_point_y"].values.tolist()
 
-        return [(x,y) for x,y in zip(xs,ys)]
+        # Workaround rdp module bug
+        return [(y,IMAGE_HEIGHT-x) for x,y in zip(xs,ys)]
