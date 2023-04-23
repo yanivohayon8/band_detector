@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 
 class HoughLine():
@@ -22,19 +23,20 @@ class HoughLine():
         return (x1,y1),(x2,y2)
 
 
-class Band():
 
-    def __init__(self,first_line:HoughLine,second_line:HoughLine) -> None:
-        self.first_line = first_line
-        self.second_line = second_line
-        self.theta = (first_line.theta + second_line.theta)/2
-        self.radius = (first_line.radius + second_line.radius)/2
+class HoughBand():
+
+    def __init__(self,line1:HoughLine,line2:HoughLine) -> None:
+        self.line1 = line1
+        self.line2 = line2
+        self.theta = (line1.theta + line2.theta)/2
+        self.radius = (line1.radius + line2.radius)/2
 
     def __repr__(self) -> str:
         return f"{self.theta};{self.radius}"
     
     def __eq__(self, __value: object) -> bool:
-        if isinstance(__value,Band):
+        if isinstance(__value,HoughBand):
             radius_diff = abs(__value.radius-self.radius)
             theta_diff = abs(__value.theta-self.theta)
             radius_threshold = 5
@@ -42,7 +44,27 @@ class Band():
             return radius_diff < radius_threshold and theta_diff < theta_threshold
     
     def get_width(self):
-        return abs(self.first_line.radius - self.second_line)
-            
+        return abs(self.line1.radius - self.line2.radius)
+    
 
-        return False
+def detect_hough_lines(img:np.ndarray,rho_resolution=1,theta_resolution=1,minimum_votes = 100):
+
+    if img.dtype != np.uint8:
+        img_copy = img.astype(np.uint8)
+    else:
+        img_copy = img
+
+    # set srcn and dstn as 0 to use the classical hough transform algorithm
+    lines =  cv2.HoughLines(img,rho_resolution,theta_resolution*np.pi/180,minimum_votes,0,0)
+
+    if lines is None:
+        return []
+    
+    hough_lines = []
+    
+    for line in lines:
+        radius,theta = line[0]
+        hough_line = HoughLine(theta,radius)
+        hough_lines.append(hough_line)
+    
+    return hough_lines

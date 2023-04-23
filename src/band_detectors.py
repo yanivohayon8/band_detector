@@ -1,7 +1,7 @@
 import cv2
 import src.preprocess as pr
 import numpy as np
-from src.band import Band,HoughLine
+from src.bands.hough import Band,HoughLine
 
 class StraightBandsDetector():
 
@@ -22,7 +22,7 @@ class StraightBandsDetector():
             The image
         '''
         img_smoothed = pr.run_bilateral_filter(self.img)
-        img_normelized = img_smoothed/255.0
+        img_normelized = img_smoothed/255.0 # put this inside the segment kmeans function (make a copy within it)
         img_segmented = pr.segment_kmeans(img_normelized)
         self.img_color_segmented = (img_segmented*255).astype(np.uint8)
 
@@ -30,15 +30,7 @@ class StraightBandsDetector():
         self.img_edge_map = pr.canny(img_segmented_gray)
     
 
-    def detect_hough_lines(self, rho_resolution=1,theta_resolution=1,minimum_votes = 100):
-        # set srcn and dstn as 0 to use the classical hough transform algorithm
-        lines =  cv2.HoughLines(self.img_edge_map,rho_resolution,theta_resolution*np.pi/180,minimum_votes,0,0)
-        self.hough_lines = []
-        
-        for line in lines:
-            radius,theta = line[0]
-            hough_line = HoughLine(theta,radius)
-            self.hough_lines.append(hough_line)
+
     
     def pair_parallel_lines(self,lines:list=None,max_theta_diff = 0.06):
         '''
