@@ -1,20 +1,14 @@
 import unittest
 from src.intact_surface_detectors import StraightBandsDetector
+from src.bands import hough
 
-
-# class TestStraightBandsDetector(unittest.TestCase):
-#     def detect_lines_fragment(self,img_path,img_name):
-
-#         detector = StraightBandsDetector(img_path)
-#         detector.load_img()
-#         detector.preprocess()
-#         detector.detect_hough_lines(minimum_votes=300)
-#         bands = detector.detect_bands()
+class TestStraightBandsDetector(unittest.TestCase):
+    def test_toy_example(self):
+        
+        hough_lines = [hough.HoughLine(50,1),hough.HoughLine(50.5,4),hough.HoughLine(90.02,9)]
+        detector = StraightBandsDetector(hough_lines)
+        detector.detect()
     
-#     def test_detect_lines_RPf_00279(self):
-#         img_name = "RPf_00279"
-#         img_path = f"data/images/obj_images/{img_name}"
-#         self.detect_lines_fragment(img_path)
 
 if __name__ == "__main__":
     unittest.main()

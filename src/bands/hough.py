@@ -7,9 +7,6 @@ class HoughLine():
     def __init__(self,theta,rho) -> None:
         self.theta = theta
         self.rho = rho
-        self.slope = -1 / np.tan(theta)
-        self.bias = rho / np.sin(theta)
-        pass
     
     def __repr__(self) -> str:
         return f"theta={self.theta},radius={self.rho}"
@@ -70,25 +67,43 @@ class HoughLine():
 
 class HoughBand():
 
-    def __init__(self,line1:HoughLine,line2:HoughLine) -> None:
-        self.line1 = line1
-        self.line2 = line2
-        self.theta = (line1.theta + line2.theta)/2
-        self.radius = (line1.radius + line2.radius)/2
+    def __init__(self,hough_lines:list[HoughLine]) -> None:
+        self.hough_lines = hough_lines
+
+    def get_theta(self):
+
+        if len(self.hough_lines) == 0:
+            return None
+
+        avg = 0
+
+        for line in self.hough_lines:
+            avg+=line.theta
+        
+        return avg/len(self.hough_lines)
+    
+    def get_rho(self):
+
+        if len(self.hough_lines) == 0:
+            return None
+
+        avg = 0
+
+        for line in self.hough_lines:
+            avg+=line.rho
+        
+        return avg/len(self.hough_lines)
 
     def __repr__(self) -> str:
-        return f"{self.theta};{self.radius}"
+        return f"{self.get_theta()};{self.get_rho()}"
     
-    def __eq__(self, __value: object) -> bool:
-        if isinstance(__value,HoughBand):
-            radius_diff = abs(__value.radius-self.radius)
-            theta_diff = abs(__value.theta-self.theta)
-            radius_threshold = 5
-            theta_threshold = 1 # because the resolution is 1
-            return radius_diff < radius_threshold and theta_diff < theta_threshold
+    def insert(self,hough_line:HoughLine):
+        self.hough_lines.append(hough_line)
     
-    def get_width(self):
-        return abs(self.line1.radius - self.line2.radius)
+
+
+    # def get_width(self):
+    #     return abs(self.line1.radius - self.line2.radius)
     
 
 def detect_hough_lines_randomly(img:np.ndarray,rho_resolution=1,theta_resolution=1,minimum_votes = 100):
