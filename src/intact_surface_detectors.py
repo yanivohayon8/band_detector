@@ -24,11 +24,3 @@ class StraightBandsDetector():
                 bands.append(HoughBand([line]))
 
         return bands
-
-
-
-
-    
-        
-
-
