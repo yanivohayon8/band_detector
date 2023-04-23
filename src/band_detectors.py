@@ -1,7 +1,7 @@
 import cv2
 import src.preprocess as pr
 import numpy as np
-from src.bands.hough import Band,HoughLine
+from src.bands.hough import HoughBand,HoughLine
 
 class StraightBandsDetector():
 
@@ -28,9 +28,6 @@ class StraightBandsDetector():
 
         img_segmented_gray = cv2.cvtColor(self.img_color_segmented,cv2.COLOR_RGB2GRAY)
         self.img_edge_map = pr.canny(img_segmented_gray)
-    
-
-
     
     def pair_parallel_lines(self,lines:list=None,max_theta_diff = 0.06):
         '''
@@ -83,13 +80,12 @@ class StraightBandsDetector():
         
         return pairs    
 
-
     def detect_bands(self)->list:
         parallel_lines_pairs = self.pair_parallel_lines()
         close_lines_pairs = self.pair_close_lines(min_radius_diff=100)
         potential_lines_pairs = [pair for pair in parallel_lines_pairs if not pair in close_lines_pairs]
 
-        bands_with_duplicates = [Band(self.hough_lines[pair[0]],self.hough_lines[pair[1]]) for pair in potential_lines_pairs]
+        bands_with_duplicates = [HoughBand(self.hough_lines[pair[0]],self.hough_lines[pair[1]]) for pair in potential_lines_pairs]
         bands = []
         for band in bands_with_duplicates:
             if band in bands:

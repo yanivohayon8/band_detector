@@ -30,4 +30,5 @@ class RdpDataloader():
         ys = self.df["start_point_y"].values.tolist()
 
         # Workaround rdp module bug
-        return [(y,IMAGE_HEIGHT-x) for x,y in zip(xs,ys)]
+        #return [(y,2064-x) for x,y in zip(xs,ys)]
+        return [(y,2000-x) for x,y in zip(xs,ys)]
