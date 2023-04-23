@@ -99,6 +99,9 @@ class HoughBand():
     
     def insert(self,hough_line:HoughLine):
         self.hough_lines.append(hough_line)
+
+    def get_representive_line(self):
+        return HoughLine(self.get_theta(),self.get_rho())
     
 
 

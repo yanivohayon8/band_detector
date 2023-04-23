@@ -6,9 +6,10 @@ from src.bands import two_points
 import cv2
 from src.intact_surface_detectors import StraightBandsDetector
 from src import DEBUG_COLORS
+from src.loader import RdpDataloader
 
 
-def detect_straight_line_bands(group,img_name,is_debug=False):
+def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
     img_path = f"{intact_images_path}/group_{group}/{img_name}"
     processor = IntactProcessor(img_path)
     img = processor.load_img()
@@ -24,6 +25,12 @@ def detect_straight_line_bands(group,img_name,is_debug=False):
     
     band_detector = StraightBandsDetector(hough_lines)
     bands = band_detector.detect()
+    bands_as_lines = [band.get_representive_line() for band in bands]
+
+    rdp_loader = RdpDataloader(rdp_csv_path)
+    rdp_loader.load()
+    polygon_coords = rdp_loader.get_polygon_coords()
+
 
 
     if is_debug:
@@ -38,10 +45,16 @@ def detect_straight_line_bands(group,img_name,is_debug=False):
                 cv2.line(img_,points[0],points[1],DEBUG_COLORS[i%len(DEBUG_COLORS)],2)
 
 
-        fig, axs = plt.subplots(1,3)
-        axs[0].imshow(img_preprocessed)
-        axs[1].imshow(edge_map,cmap="gray")
-        axs[2].imshow(img_)
+        poly_x = [coord[0] for coord in polygon_coords]
+        poly_y = [coord[1] for coord in polygon_coords]
+
+        fig, axs = plt.subplots(2,2)
+        axs[0,0].imshow(img_preprocessed)
+        axs[0,1].imshow(edge_map,cmap="gray")
+        axs[1,0].imshow(img_)
+        axs[1,1].set_aspect("equal",adjustable='box')
+        axs[1,1].plot(poly_x + [poly_x[0]], poly_y + [poly_y[0]],color="red")
+
         plt.show()
         plt.close()
     
