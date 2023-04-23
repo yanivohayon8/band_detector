@@ -13,6 +13,7 @@ class IntactProcessor():
     def load_img(self):
         self.img = cv2.imread(self.img_path)
         self.img = cv2.cvtColor(self.img,cv2.COLOR_BGR2RGB)
+        return self.img
     
     def preprocess(self):
         img_smoothed = utils.run_bilateral_filter(self.img)

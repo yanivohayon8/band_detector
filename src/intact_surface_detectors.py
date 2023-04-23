@@ -5,29 +5,9 @@ from src.bands.hough import HoughBand,HoughLine
 
 class StraightBandsDetector():
 
-    def __init__(self,img_path) -> None:
-        self.img_path = img_path
-        self.img = None
-        self.img_edge_map = None
-        self.hough_lines = None #
-        self.regular_lines = None
-    
-    # def load_img(self):
-    #     self.img = cv2.imread(self.img_path)
-    #     self.img = cv2.cvtColor(self.img,cv2.COLOR_BGR2RGB)
-    
-    # def preprocess(self):
-    #     '''
-    #         This function processed the loaded image and yields the edge map as well as segmentation map by color.
-    #         The image
-    #     '''
-    #     img_smoothed = pr.run_bilateral_filter(self.img)
-    #     img_normelized = img_smoothed/255.0 # put this inside the segment kmeans function (make a copy within it)
-    #     img_segmented = pr.segment_kmeans(img_normelized)
-    #     self.img_color_segmented = (img_segmented*255).astype(np.uint8)
-
-    #     img_segmented_gray = cv2.cvtColor(self.img_color_segmented,cv2.COLOR_RGB2GRAY)
-    #     self.img_edge_map = pr.canny(img_segmented_gray)
+    def __init__(self,hough_lines) -> None:
+        self.hough_lines = hough_lines #
+        # self.regular_lines = None
     
     def pair_parallel_lines(self,lines:list=None,max_theta_diff = 0.06):
         '''
