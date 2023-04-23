@@ -90,6 +90,12 @@ class TestTwoPointsLinesSimpleExamples(unittest.TestCase):
         print()
         print("Intersection: ",intersection)
 
+        convex_hull = polygon.polygon.convex_hull
+        convex_hull_x,convex_hull_y = convex_hull.exterior.xy
+        convex_hull_x = convex_hull_x.tolist()
+        convex_hull_y = convex_hull_y.tolist()
+        plt.plot(convex_hull_x+[convex_hull_x[0]],convex_hull_y+[convex_hull_y[0]],color="blue",label="Convex Hull")
+
         plt.show()
         plt.close()
 
