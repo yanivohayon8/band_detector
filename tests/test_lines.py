@@ -5,6 +5,7 @@ import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 from shapely.geometry import MultiPoint,Point
+from src.loader import RdpDataloader
 
 
 class TestHoughSimpleExamples(unittest.TestCase):
@@ -41,10 +42,9 @@ class TestTwoPointsLinesSimpleExamples(unittest.TestCase):
 
         # fig, (ax1,ax2) = plt.subplots(1,2)
         ax1 = plt.subplot()
+        ax1.set_aspect('equal',adjustable="box")
         line.plot(ax1)
-        # line.plot(ax2)
         polygon.plot(ax1)
-        # polygon.plot(ax2)
 
         intersection = polygon.find_intersection(line.line_string)
 
@@ -65,24 +65,35 @@ class TestTwoPointsLinesSimpleExamples(unittest.TestCase):
             closest_x= closest_x + x.tolist()
             closest_y= closest_y + y.tolist()
 
-        # closest_x = [coord.x for point in  ]
-        # closest_y = [coord.y for coord in closest_vertices]
-        #closest_x,closest_y = edges.xy
         ax1.scatter(closest_x, closest_y, color='purple', label='closest vertices')
 
         ax1.legend()
-        # ax2.legend()
+        print("Edges of polygon involved:")
+        [print(edge,end=",  ") for edge in edges]
+        print()
+        print("Intersection: ",intersection)
+
         plt.show()
         plt.close()
 
-    def test_example_1(self):
-        line_coords = [(6, 6), (-2, -1)]
-        polygon_coords = [(0, 0), (0, 2), (2, 2), (2, 0)]
+        return len(edges),len(intersection.geoms)
+
+    def test_square_1(self):
+        line_coords = [(600, 600), (-200, -100)]
+        polygon_coords = [(0, 0), (0, 200), (200, 200), (200, 0)]
         self.run_toy_example(line_coords,polygon_coords)
 
-    def test_example_2(self):
-        line_coords = [(5, 6), (-2, -6)]
-        polygon_coords = [(0, 0), (0, 2), (2, 2), (2, 0)]
+    def test_square_2(self):
+        line_coords = [(500, 600), (-200, -600)]
+        polygon_coords = [(0, 0), (0, 200), (200, 200), (200, 0)]
+        self.run_toy_example(line_coords,polygon_coords)
+
+    def test_RPf_00368(self):
+        csv_path = "data/rdp_segments/group_45/csv/RPf_00368_intact_mesh_rdp_10.csv"
+        loader = RdpDataloader(csv_path)
+        loader.load()
+        polygon_coords = loader.get_polygon_coords()
+        line_coords = [(0, 0), (1950, 2000)]
         self.run_toy_example(line_coords,polygon_coords)
 
 

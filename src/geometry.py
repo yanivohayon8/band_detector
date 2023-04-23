@@ -18,15 +18,16 @@ class PolygonWrapper():
         
         return intersection
     
-    def find_edges_touching_points(self,points:MultiPoint):
+    def find_edges_touching_points(self,points:MultiPoint,buffer_size=10):
         edges_touching_points = []
         
         for i in range(len(self.coordinates) - 1):
             coord1 = self.coordinates[i]
             coord2 = self.coordinates[i + 1]
             edge = LineString([coord1, coord2])
+            # edge = edge.buffer(buffer_size)
 
-            if any([point.intersects(edge) for point in points.geoms]):
+            if any([point.intersects(edge.buffer(buffer_size)) for point in points.geoms]):
                 edges_touching_points.append(edge)
         
         return edges_touching_points
