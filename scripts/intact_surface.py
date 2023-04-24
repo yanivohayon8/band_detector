@@ -104,4 +104,3 @@ def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
     
     
 
-
