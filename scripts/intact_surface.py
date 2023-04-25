@@ -42,6 +42,8 @@ def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
         intersec = convex_hull_.find_intersection(band_line.line_string)
         intersections.append(intersec)
         intersected_edges.append(convex_hull_.find_edges_touching_points(intersec))
+
+        
     
 
     if is_debug:
@@ -75,20 +77,31 @@ def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
             intersec_y = intersec_y + [coord.y for coord in _]
         
         closest_x = []
-        closest_y  = []
+        closest_y = []
 
         for edge_pair in intersected_edges:
+            print("###Vertices indexes of intersected edges for the next band:")
             for edge in edge_pair:
-                x,y = edge.xy
-                closest_x= closest_x + x.tolist()
-                closest_y= closest_y + y.tolist()
+                xs,ys = edge.xy
+                xs = xs.tolist()
+                ys = ys.tolist()
+                closest_x= closest_x + xs 
+                closest_y= closest_y + ys
 
-            
+                
+                for x,y in zip(xs,ys):
+                    vertex_index = polygon_coords.index((x,y))
+                    print(f"The index of ({x},{y}) is {vertex_index} ",end=",")
+            print()
+
 
         fig2, ax = plt.subplots(1,1)
         ax.set_aspect("equal",adjustable='box')
         ax.plot(poly_x + [poly_x[0]], poly_y + [poly_y[0]],color="red",label="polygon")
-        ax.plot(convex_hull_x+[convex_hull_x[0]],convex_hull_y+[convex_hull_y[0]],color="blue",label="Convex Hull")
+        #fig2.gca().invert_xaxis()
+        fig2.gca().invert_yaxis()
+
+        #ax.plot(convex_hull_x+[convex_hull_x[0]],convex_hull_y+[convex_hull_y[0]],color="blue",label="Convex Hull")
         #ax.scatter(intersec_x, intersec_y, color='green', label='Intersection Points')
         ax.scatter(closest_x, closest_y, color='purple', label='Closest Vertices')
         
@@ -100,7 +113,6 @@ def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
         ax.legend()
 
         plt.show()
+        plt.waitforbuttonpress()
         plt.close()
     
-    
-

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 class TestRdpLoader(unittest.TestCase):
 
     def test_rdp_polygon(self):
-        csv_path = "data/rdp_segments/group_45/csv/RPf_00368_intact_mesh_rdp_10.csv"
+        csv_path = "data/rdp_segments/group_45/RPf_00368_intact_mesh.csv"
         loader = RdpDataloader(csv_path)
         loader.load()
         polygon_coords = loader.get_polygon_coords()

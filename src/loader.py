@@ -18,4 +18,7 @@ class RdpDataloader():
 
         # Workaround rdp module bug
         #return [(y,2064-x) for x,y in zip(xs,ys)]
-        return [(y,2000-x) for x,y in zip(xs,ys)]
+        #return [(y,2000-x) for x,y in zip(xs,ys)]
+        #return [(y,1444-x) for x,y in zip(xs,ys)]
+        #return [(x,y-1444/2) for x,y in zip(xs,ys)]
+        return [(y,x) for x,y in zip(xs,ys)]

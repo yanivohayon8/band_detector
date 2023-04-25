@@ -13,8 +13,8 @@ class PolygonWrapper():
         
         intersection = self.polygon.exterior.intersection(line)
 
-        if intersection is None:
-            return []
+        if intersection is None or intersection.is_empty:
+            return MultiPoint([])
         
         return intersection
     
@@ -27,6 +27,7 @@ class PolygonWrapper():
             edge = LineString([coord1, coord2])
             # edge = edge.buffer(buffer_size)
 
+            #if isinstance(points,MultiPoint):
             if any([point.intersects(edge.buffer(buffer_size)) for point in points.geoms]):
                 edges_touching_points.append(edge)
         

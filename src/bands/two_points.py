@@ -10,6 +10,9 @@ class TwoPointsLine():
         line_x = [self.point1[0],self.point2[0]]
         line_y = [self.point1[1],self.point2[1]]
         ax.plot(line_x, line_y, **kwargs)
+    
+    def __repr__(self) -> str:
+        return f"{self.point1}  {self.point2}"
 
 
 class TwoPointsBand():
