@@ -1,11 +1,21 @@
 from shapely.geometry import LineString,MultiPoint,Polygon,MultiLineString
+from shapely import affinity
 
 class PolygonWrapper():
 
     def __init__(self,polygon_coords:list) -> None:
-        self.coordinates = polygon_coords
+        #self.coordinates = polygon_coords
         # self.polygon_border = LineString(polygon_coords)#Polygon(polygon_coords)#LineString(polygon_coords)
         self.polygon = Polygon(polygon_coords)#Polygon(polygon_coords)#LineString(polygon_coords)
+
+    def get_coords(self):
+        return list(self.polygon.exterior.coords)
+    
+    def get_coords_separated(self):
+        x,y = self.polygon.exterior.coords.xy
+        x = x.tolist()
+        y = y.tolist()
+        return x,y
 
 
     def find_intersection(self,line:LineString)->MultiPoint:
@@ -19,11 +29,12 @@ class PolygonWrapper():
         return intersection
     
     def find_edges_touching_points(self,points:MultiPoint,buffer_size=10):
+        coordinates = list(self.polygon.exterior.coords)
         edges_touching_points = []
         
-        for i in range(len(self.coordinates) - 1):
-            coord1 = self.coordinates[i]
-            coord2 = self.coordinates[i + 1]
+        for i in range(len(coordinates) - 1):
+            coord1 = coordinates[i]
+            coord2 = coordinates[i + 1]
             edge = LineString([coord1, coord2])
             # edge = edge.buffer(buffer_size)
 
@@ -34,6 +45,11 @@ class PolygonWrapper():
         return edges_touching_points
     
     def plot(self,ax,**kwargs):
-        poly_x = [coord[0] for coord in self.coordinates]
-        poly_y = [coord[1] for coord in self.coordinates]
+        coordinates = list(self.polygon.exterior.coords)
+        poly_x = [coord[0] for coord in coordinates]
+        poly_y = [coord[1] for coord in coordinates]
         ax.plot(poly_x + [poly_x[0]], poly_y + [poly_y[0]], **kwargs)
+
+    def rotated(self,angle_degrees):
+        poly =  affinity.rotate(self.polygon,angle_degrees,'center')
+        return PolygonWrapper(poly)
