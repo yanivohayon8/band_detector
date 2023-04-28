@@ -2,7 +2,7 @@ import cv2
 from src.image_processing import utils
 import numpy as np
 
-class IntactProcessor():
+class Processor():
 
     def __init__(self,img_path) -> None:
         self.img_path = img_path
@@ -14,6 +14,8 @@ class IntactProcessor():
         self.img = cv2.imread(self.img_path)
         self.img = cv2.cvtColor(self.img,cv2.COLOR_BGR2RGB)
         return self.img
+
+class IntactProcessor(Processor):
     
     def preprocess(self):
         img_smoothed = utils.run_bilateral_filter(self.img)
@@ -25,3 +27,9 @@ class IntactProcessor():
     def get_edge_map(self,rho1=70,rho2=150):
         img_segmented_gray = cv2.cvtColor(self.img_color_segmented,cv2.COLOR_RGB2GRAY)
         return utils.canny(img_segmented_gray,rho1=rho1,rho2=rho2)
+
+class BamboolinesProcessor(Processor):
+
+    def get_edge_map(self,rho1=70,rho2=140):
+        img_gray = cv2.cvtColor(self.img,cv2.COLOR_RGB2GRAY)
+        return utils.canny(img_gray,rho1=rho1,rho2=rho2)

@@ -1,9 +1,10 @@
 from scripts.intact_surface import detect_straight_line_bands
 from scripts.write_csv_to_springs import convert_rdp_folder
+from scripts.opposite_surface import detect_bamboo_lines
 import os
 
 
-SCRIPT = "detect_straight_line_bands"#"convert_rdp_folder" #"detect_straight_line_bands"
+SCRIPT = "detect_bamboo_lines"#"convert_rdp_folder" #"detect_straight_line_bands" #"detect_bamboo_lines"
 
 if  __name__ == "__main__":
 
@@ -22,10 +23,18 @@ if  __name__ == "__main__":
         convert_rdp_folder(src_folder,dst_file,mapping_file)
 
     if SCRIPT == "detect_straight_line_bands":
-        fragment_name ="RPf_00370" #"RPf_00368"
+        fragment_name = "RPf_00370" #"RPf_00368" #RPf_00370" #"RPf_00371"
         csv_path = f"data/rdp_segments/group_45/{fragment_name}_intact_mesh.csv"
 
         detect_straight_line_bands(45,f"{fragment_name}_intact_mesh.png",csv_path,is_debug=True)
+
+    if SCRIPT == "detect_bamboo_lines":
+        group=45#39
+        img_name ="RPf_00370_opposite_mesh_normals.png" #"RPf_00368_opposite_mesh_normals.png"
+        img_path = f"data/group_{group}/{img_name}"
+        #img_path = "data/images/RPf_00333_opposite_mesh_normals.png"
+        detect_bamboo_lines(img_path)
+
     print("finish")
 
 

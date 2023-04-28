@@ -42,6 +42,26 @@ class TestHoughSimpleExamples(unittest.TestCase):
         plt.imshow(img)
         plt.close()
 
+
+    def test_lines_rpf_00333_bamboo(self):
+        img = cv2.imread("data/images/RPf_00333_opposite_mesh_normals.png")
+        img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        edge_map = cv2.Canny(img,150,300)
+
+        #plt.imshow(edge_map,cmap="gray")
+        lines = hough.detect_hough_lines(edge_map,minimum_votes=150)
+
+
+        for line in lines:
+            points = line.sample_two_points(img.shape)
+            cv2.line(img,points[0],points[1],(0,255,0),thickness=2)
+
+        fig, (ax1,ax2) = plt.subplots(1,2)
+        ax1.imshow(edge_map,cmap="gray")
+        ax2.imshow(img)
+        plt.show()
+        plt.close()
+
     def test_bands(self):
         img = cv2.imread(self.simple_img_path,0)
         lines = hough.detect_hough_lines(img,minimum_votes=400)

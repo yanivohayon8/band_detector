@@ -47,6 +47,7 @@ def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
     
 
     if is_debug:
+        
         img_ = img.copy()
         
         # for line in two_point_lines:
@@ -59,8 +60,11 @@ def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
 
         fig, axs = plt.subplots(1,3)
         axs[0].imshow(img_preprocessed)
+        axs[0].set_axis_off()
         axs[1].imshow(edge_map,cmap="gray")
+        axs[1].set_axis_off()
         axs[2].imshow(img_)
+        axs[2].set_axis_off()
 
         poly_x = [coord[0] for coord in polygon_coords]
         poly_y = [coord[1] for coord in polygon_coords]
@@ -101,7 +105,7 @@ def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
         #fig2.gca().invert_xaxis()
         fig2.gca().invert_yaxis()
 
-        #ax.plot(convex_hull_x+[convex_hull_x[0]],convex_hull_y+[convex_hull_y[0]],color="blue",label="Convex Hull")
+        ax.plot(convex_hull_x+[convex_hull_x[0]],convex_hull_y+[convex_hull_y[0]],color="blue",label="Convex Hull",linestyle="dashed")
         #ax.scatter(intersec_x, intersec_y, color='green', label='Intersection Points')
         ax.scatter(closest_x, closest_y, color='purple', label='Closest Vertices')
         
@@ -111,7 +115,7 @@ def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
             ax.plot(xs,ys,color="black",linewidth=2)
 
         ax.legend()
-
+        ax.set_axis_off()
         plt.show()
         plt.waitforbuttonpress()
         plt.close()

@@ -13,11 +13,12 @@ class TestRdpLoader(unittest.TestCase):
         polygon_coords = loader.get_polygon_coords()
         poly_x = [coord[0] for coord in polygon_coords]
         poly_y = [coord[1] for coord in polygon_coords]
-        plt.plot(poly_x + [poly_x[0]], poly_y + [poly_y[0]],color="red")
+        plt.plot(poly_x + [poly_x[0]], poly_y + [poly_y[0]],color="red",linestyle="dashed")
         
         img = cv2.imread("data/images/group_45/RPf_00368_intact_mesh.png",cv2.COLOR_BGR2RGB)
         plt.imshow(img)
         plt.show()
+        plt.waitforbuttonpress()
         plt.close()
 
 
