@@ -2,9 +2,10 @@ from scripts.intact_surface import detect_straight_line_bands
 from scripts.write_csv_to_springs import convert_rdp_folder
 from scripts.opposite_surface import detect_bamboo_lines
 import os
+import glob
 
 
-SCRIPT = "detect_bamboo_lines"#"convert_rdp_folder" #"detect_straight_line_bands" #"detect_bamboo_lines"
+SCRIPT = "detect_straight_line_bands"#"convert_rdp_folder" #"detect_straight_line_bands" #"detect_bamboo_lines"
 
 if  __name__ == "__main__":
 
@@ -23,10 +24,16 @@ if  __name__ == "__main__":
         convert_rdp_folder(src_folder,dst_file,mapping_file)
 
     if SCRIPT == "detect_straight_line_bands":
+        group = 39
         fragment_name = "RPf_00370" #"RPf_00368" #RPf_00370" #"RPf_00371"
-        csv_path = f"data/rdp_segments/group_45/{fragment_name}_intact_mesh.csv"
 
-        detect_straight_line_bands(45,f"{fragment_name}_intact_mesh.png",csv_path,is_debug=True)
+        intact_images =sorted(glob.glob(f"data/group_{group}/*_intact_mesh.png"))
+        csvs_paths = sorted(glob.glob(f"data/rdp_segments/group_{group}/*_intact_mesh.csv"))
+        
+        assert len(intact_images)>0 and len(csvs_paths)>0
+
+        for img_path,csv_path in zip(intact_images,csvs_paths):
+            detect_straight_line_bands(img_path,csv_path,is_debug=True)
 
     if SCRIPT == "detect_bamboo_lines":
         group=45#39

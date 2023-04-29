@@ -10,8 +10,8 @@ from src.loader import RdpDataloader
 from src.geometry import PolygonWrapper
 
 
-def detect_straight_line_bands(group,img_name,rdp_csv_path,is_debug=False):
-    img_path = f"{intact_images_path}/group_{group}/{img_name}"
+def detect_straight_line_bands(img_path,rdp_csv_path,is_debug=False):
+    #img_path = f"{intact_images_path}/group_{group}/{img_name}"
     processor = IntactProcessor(img_path)
     img = processor.load_img()
     img_preprocessed = processor.preprocess()

@@ -1,4 +1,4 @@
-from shapely.geometry import LineString,MultiPoint,Polygon,MultiLineString
+from shapely.geometry import LineString,MultiPoint,Polygon,MultiLineString,Point
 from shapely import affinity
 
 class PolygonWrapper():
@@ -26,7 +26,11 @@ class PolygonWrapper():
         if intersection is None or intersection.is_empty:
             return MultiPoint([])
         
-        return intersection
+        if isinstance(intersection,MultiPoint):
+            return intersection
+        
+        if isinstance(intersection,Point):            
+            return MultiPoint([intersection])
     
     def find_edges_touching_points(self,points:MultiPoint,buffer_size=10):
         coordinates = list(self.polygon.exterior.coords)
