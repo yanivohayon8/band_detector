@@ -62,6 +62,12 @@ class HoughLine():
     
     def get_x(self,y,bound=7000):
         return (self.rho - y*np.sin(self.theta))/(np.cos(self.theta)+1e-6)
+    
+    def toJson(self):
+        return {
+            "rho":str(self.rho),
+            "theta":str(self.theta)
+        }
 
 
 
