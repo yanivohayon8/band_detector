@@ -5,7 +5,7 @@ import os
 import glob
 
 
-SCRIPT = "detect_straight_line_bands"#"convert_rdp_folder" #"detect_straight_line_bands" #"detect_bamboo_lines"
+SCRIPT = "convert_rdp_folder"#"convert_rdp_folder" #"detect_straight_line_bands" #"detect_bamboo_lines"
 
 if  __name__ == "__main__":
 
@@ -14,37 +14,38 @@ if  __name__ == "__main__":
         wp3_folder = "C:\\Users\\97254\\Desktop\\msc\\RePAIR\\projects\\WP3-PuzzleSolving\\"
         src_folder = wp3_folder+ f"data\\tests\\output\\segments_rdp\\repair-data\\{group_name}\\rdp_10" #"data/rdp_segments/group_45/rdp_10"
         
-        dst_folder = f"data\\{group_name}\\"
-        if not os.path.exists(dst_folder):
-            os.makedirs(dst_folder)
+        data_folder = f"data\\{group_name}\\"
+        images_folder = f"{data_folder}/intact_images"
+        dst_folder = f"{data_folder}/puzzle"
+        dst_images_folder = f"{dst_folder}/images"
 
-        dst_file = dst_folder + "pieces.csv"
-        mapping_file = dst_folder +"mapping.csv"
+        if not os.path.exists(dst_images_folder):
+            os.makedirs(dst_images_folder)
 
-        convert_rdp_folder(src_folder,dst_file,mapping_file)
+        convert_rdp_folder(src_folder,dst_folder,images_folder)
 
     if SCRIPT == "detect_straight_line_bands":
         #fragment_name = "RPf_00370" #"RPf_00368" #RPf_00370" #"RPf_00371"
         intact_images = None
         csvs_paths = None
-        intact_images = [
-            # "data/group_39/intact_images\\RPf_00319_intact_mesh.png",
-            # #"data/group_39/intact_images\\RPf_00317_intact_mesh.png"
-            # "data/group_39/intact_images\\RPf_00320_intact_mesh.png"
-            # #"data/group_45/intact_images\\RPf_00370_intact_mesh.png"
-            "data/group_45/intact_images\\RPf_00368_intact_mesh.png",
-            "data/group_45/intact_images\\RPf_00370_intact_mesh.png",
-            "data/group_45/intact_images\\RPf_00371_intact_mesh.png"
-        ]
-        csvs_paths = [
-            # "data/rdp_segments/group_39\\RPf_00319_intact_mesh.csv",
-            # #"data/rdp_segments/group_39\\RPf_00317_intact_mesh.csv"
-            # "data/rdp_segments/group_39\\RPf_00320_intact_mesh.csv"
-            # #"data/rdp_segments/group_45\\RPf_00370_intact_mesh.csv"
-            "data/rdp_segments/group_45\\RPf_00368_intact_mesh.csv",
-            "data/rdp_segments/group_45\\RPf_00370_intact_mesh.csv",
-            "data/rdp_segments/group_45\\RPf_00371_intact_mesh.csv"
-        ]
+        # intact_images = [
+        #     # "data/group_39/intact_images\\RPf_00319_intact_mesh.png",
+        #     # #"data/group_39/intact_images\\RPf_00317_intact_mesh.png"
+        #     # "data/group_39/intact_images\\RPf_00320_intact_mesh.png"
+        #     # #"data/group_45/intact_images\\RPf_00370_intact_mesh.png"
+        #     "data/group_45/intact_images\\RPf_00368_intact_mesh.png",
+        #     "data/group_45/intact_images\\RPf_00370_intact_mesh.png",
+        #     "data/group_45/intact_images\\RPf_00371_intact_mesh.png"
+        # ]
+        # csvs_paths = [
+        #     # "data/rdp_segments/group_39\\RPf_00319_intact_mesh.csv",
+        #     # #"data/rdp_segments/group_39\\RPf_00317_intact_mesh.csv"
+        #     # "data/rdp_segments/group_39\\RPf_00320_intact_mesh.csv"
+        #     # #"data/rdp_segments/group_45\\RPf_00370_intact_mesh.csv"
+        #     "data/rdp_segments/group_45\\RPf_00368_intact_mesh.csv",
+        #     "data/rdp_segments/group_45\\RPf_00370_intact_mesh.csv",
+        #     "data/rdp_segments/group_45\\RPf_00371_intact_mesh.csv"
+        # ]
         group = 39
 
         if intact_images is None:
