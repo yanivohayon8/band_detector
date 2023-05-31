@@ -5,17 +5,24 @@ from src.geometry import PolygonWrapper
 import numpy as np
 
 
-def convert_rdp_folder(src_folder,dst_file_path,mapping_file,factor=3,use_convex_hull=False):
+def convert_rdp_folder(src_folder,dst_folder,factor=3,use_convex_hull=False):
     '''
         src_folder - the folder of csv output of the rdp 
         dst_file_path - the path of the final csv of the pieces
         mapping_file - file that maps betwen name to the num order....
     '''
+    pieces_file_path = dst_folder + "pieces.csv"
+    mapping_file = dst_folder +"mapping.csv"
+    convex_hull_file_path = dst_folder + "convex_hull.csv"
+
     fragment_files = glob.glob(src_folder+"/*.csv")
     fragment2num = {}
     xs = []
     ys = []
     ids = []
+    convex_hull_xs = []
+    convex_hull_ys = []
+    convex_hull_ids = []
     fragments_names = []
 
 
@@ -26,43 +33,64 @@ def convert_rdp_folder(src_folder,dst_file_path,mapping_file,factor=3,use_convex
         rdp_loader.load()
         polygon_coords = rdp_loader.get_polygon_coords()
 
-        if use_convex_hull:
-            polygon = PolygonWrapper(polygon_coords)
-            convex_hull = polygon.polygon.convex_hull
-            convex_hull_x,convex_hull_y = convex_hull.exterior.xy
-            convex_hull_x = convex_hull_x.tolist()
-            convex_hull_y = convex_hull_y.tolist()
-            x_mean = np.mean(convex_hull_x)
-            y_mean = np.mean(convex_hull_y)
+        #
+        # computing convex hull coordinates
+        #
+        polygon = PolygonWrapper(polygon_coords)
+        convex_hull = polygon.polygon.convex_hull
+        convex_hull_x,convex_hull_y = convex_hull.exterior.xy
+        convex_hull_x = convex_hull_x.tolist()
+        convex_hull_y = convex_hull_y.tolist()
+        x_mean = np.mean(convex_hull_x)
+        y_mean = np.mean(convex_hull_y)
 
-            for x,y in zip(convex_hull_x,convex_hull_y):
-                xs.append((x-x_mean)*factor)
-                ys.append((y-y_mean)*factor)
-                ids.append(i)
-        else:
-            x_sum = 0
-            y_sum = 0
+        for x,y in zip(convex_hull_x,convex_hull_y):
+            #convex_hull_xs.append((x-x_mean)*factor)
+            #convex_hull_ys.append((y-y_mean)*factor)
+            convex_hull_xs.append(x)
+            convex_hull_ys.append(y)
+            convex_hull_ids.append(i)
+        
 
-            for coord in polygon_coords:
-                x_sum+=coord[0]
-                y_sum+= coord[1]
-            
-            x_mean = x_sum/len(polygon_coords)
-            y_mean = y_sum/len(polygon_coords)
+        #
+        # computing polygon coordinates
+        #
 
-            for coord in polygon_coords:
-                xs.append((coord[0]-x_mean)*factor)
-                ys.append((coord[1]-y_mean)*factor)
-                # xs.append(float(coord[0])*factor)
-                # ys.append(float(coord[1])*factor)
-                ids.append(i)
+        x_min = 99999
+        y_min = 99999
+
+        for coord in polygon_coords:
+
+            if coord[0]<x_min:
+                x_min = coord[0]
+            if coord[1]<y_min:
+                y_min = coord[1]
+        
+        for coord in polygon_coords:
+            #xs.append((coord[0]-x_mean)*factor)
+            #ys.append((coord[1]-y_mean)*factor)
+            xs.append(coord[0]-x_min)
+            ys.append(coord[1]-y_min)
+            #ids.append(i)
+            ids.append(fragment_name)
     
+
+    df_convex_hull = pd.DataFrame({
+            "piece":convex_hull_ids,
+            "x":convex_hull_xs,
+            "y":convex_hull_ys
+        })
+
+    df_convex_hull.to_csv(convex_hull_file_path,index=False)
+
     # Ofir convention
-    df_result = pd.DataFrame({
+    df_pieces = pd.DataFrame({
         "piece":ids,
         "x":xs,
         "y":ys
     })
+    
+    df_pieces.to_csv(pieces_file_path,index=False)
 
     df_mapping = pd.DataFrame(
         {
@@ -71,7 +99,6 @@ def convert_rdp_folder(src_folder,dst_file_path,mapping_file,factor=3,use_convex
         }
     )
 
-    df_result.to_csv(dst_file_path,index=False)
     df_mapping.to_csv(mapping_file,index=False)
 
 
