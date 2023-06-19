@@ -78,6 +78,9 @@ class TestHoughSimpleExamples(unittest.TestCase):
 
         assert band.get_width() == 20
 
+
+
+
 class TestTwoPointsLinesSimpleExamples(unittest.TestCase):
     simple_img_path = "data/images/simple_example.png"
 

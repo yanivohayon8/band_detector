@@ -2,6 +2,7 @@ import cv2
 from sklearn.cluster import KMeans
 import numpy as np
 
+
 def run_bilateral_filter(img, diameter = 50,sigma_color = 200, sigma_space = 200):
     return cv2.bilateralFilter(img,diameter,sigma_color,sigma_space)
 
@@ -34,3 +35,13 @@ def segment_kmeans(img, n_clusters=3,colors_pool=None,random_state=0):
 
 def canny(img,rho1=70,rho2=150):
     return cv2.Canny(img,rho1,rho2)
+
+def line_pixels(img,start,end):
+    dx, dy = end[0] - start[0], end[1] - start[1]
+    length = max(abs(dx), abs(dy))
+    diagonal_pixels = [img[
+                        round(start[1]+dy*t/length),
+                        round(start[0]+dx*t/length)
+                      ] for t in range(length)]
+    
+    return diagonal_pixels
