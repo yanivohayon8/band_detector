@@ -45,12 +45,19 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
     con_x,con_y = convex_hull.exterior.xy
     convex_hull_ = PolygonWrapper([(x,y) for x,y in zip (con_x.tolist(),con_y.tolist())])
 
-    convex_hull_intersections = []
-    convex_hull_intersected_edges = []
+    # convex_hull_intersections = []
+    # convex_hull_intersected_edges = []
+    # for band_line in bands_as_lines:
+    #     intersec = convex_hull_.find_intersection(band_line.line_string)
+    #     convex_hull_intersections.append(intersec)
+    #     convex_hull_intersected_edges.append(convex_hull_.find_edges_touching_points(intersec))
+
+    intersections = []
+    intersected_edges = []
     for band_line in bands_as_lines:
-        intersec = convex_hull_.find_intersection(band_line.line_string)
-        convex_hull_intersections.append(intersec)
-        convex_hull_intersected_edges.append(convex_hull_.find_edges_touching_points(intersec))
+        intersec = polygon.find_intersection(band_line.line_string)
+        intersections.append(intersec)
+        intersected_edges.append(polygon.find_edges_touching_points(intersec))
 
         
     img_with_bands = img.copy()
@@ -76,10 +83,10 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
         )
 
 
-    for i,edge_pair in enumerate(convex_hull_intersected_edges):
+    for i,edge_pair in enumerate(intersected_edges):
         print("###Vertices indexes of intersected edges for the next band:")
-        coords_of_closest_on_convex_hull = []
-        index_of_closest_on_convex_hull = []
+        coords_of_closest = []
+        index_of_closest = []
 
         for edge in edge_pair:
             xs,ys = edge.xy
@@ -89,13 +96,13 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
             for x,y in zip(xs,ys):
                 cord_ = (x,y)
                 contour_vertex_index = polygon.get_coords().index(cord_)
-                coords_of_closest_on_convex_hull.append((str(x),str(y)))
-                index_of_closest_on_convex_hull.append(contour_vertex_index)
+                coords_of_closest.append((str(x),str(y)))
+                index_of_closest.append(contour_vertex_index)
                 #print(f"The index of ({x},{y}) is {vertex_index} ",end=",")
         
-        bands_json[i]["closest_vertices_on_convex_hull"] = {}
-        bands_json[i]["closest_vertices_on_convex_hull"]["coords"] = coords_of_closest_on_convex_hull
-        bands_json[i]["closest_vertices_on_convex_hull"]["indices"] = index_of_closest_on_convex_hull
+        bands_json[i]["closest_vertices"] = {}
+        bands_json[i]["closest_vertices"]["coords"] = coords_of_closest
+        bands_json[i]["closest_vertices"]["indices"] = index_of_closest
 
     
     '''Write the results'''
@@ -125,7 +132,7 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
         intersec_x = []
         intersec_y = []
 
-        for intersec in convex_hull_intersections:
+        for intersec in intersections:
             _ = [vertex for vertex in list(intersec.geoms)]
             intersec_x = intersec_x + [coord.x for coord in _]
             intersec_y = intersec_y + [coord.y for coord in _]
@@ -133,7 +140,7 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
         closest_x = []
         closest_y = []
 
-        for edge_pair in convex_hull_intersected_edges:
+        for edge_pair in intersected_edges:
             print("###Vertices indexes of intersected edges for the next band:")
             for edge in edge_pair:
                 xs,ys = edge.xy
