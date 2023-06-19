@@ -20,7 +20,7 @@ class IntactProcessor(Processor):
     def preprocess(self):
         img_smoothed = utils.run_bilateral_filter(self.img)
         img_normelized = img_smoothed/255.0 # put this inside the segment kmeans function (make a copy within it)
-        img_segmented = utils.segment_kmeans(img_normelized)
+        img_segmented = utils.segment_kmeans(img_normelized,n_clusters=3) #The clusters: background\fragment background\ theme
         self.img_color_segmented = (img_segmented*255).astype(np.uint8)
         return self.img_color_segmented
     

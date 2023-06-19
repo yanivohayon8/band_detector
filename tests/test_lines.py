@@ -69,6 +69,14 @@ class TestHoughSimpleExamples(unittest.TestCase):
         print(repr(band))
         print(band.get_width())
 
+    def test_band_width(self):
+        band = hough.HoughBand([
+            hough.HoughLine(100,10),
+            hough.HoughLine(100.01,20),
+            hough.HoughLine(99.01,30),
+        ])
+
+        assert band.get_width() == 20
 
 class TestTwoPointsLinesSimpleExamples(unittest.TestCase):
     simple_img_path = "data/images/simple_example.png"

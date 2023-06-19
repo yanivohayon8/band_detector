@@ -11,6 +11,15 @@ from src.geometry import PolygonWrapper
 import json
 
 
+def compute_edge_map_and_segmentation(img_path,output_file_seg,output_file_edge_map):
+    processor = IntactProcessor(img_path)
+    img = processor.load_img()
+    img_segmented = processor.preprocess()
+    edge_map = processor.get_edge_map()
+
+    cv2.imwrite(output_file_seg,cv2.cvtColor(img_segmented,cv2.COLOR_BGR2RGBA))
+    cv2.imwrite(output_file_edge_map,edge_map)
+
 
 def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=100,is_debug=False):
     #img_path = f"{intact_images_path}/group_{group}/{img_name}"
@@ -20,7 +29,7 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
     edge_map = processor.get_edge_map()
     hough_lines = hough.detect_hough_lines(edge_map,minimum_votes=minimum_votes)
     band_detector = StraightBandsDetector(hough_lines)
-    bands = band_detector.detect(rho_diff=50)
+    bands = band_detector.detect()
     bands_as_lines = []
     
     for band in bands:
@@ -56,10 +65,13 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
             cv2.line(img_with_bands,points[0],points[1],band_color,2)
             lines_as_json.append(line.toJson())
 
+        band_width = band.get_width()
+
         bands_json.append(
             {
-                "color":band_color,
-                "lines":lines_as_json
+                "debug_color":band_color,
+                "lines":lines_as_json,
+                "width":int(band_width)
             }
         )
 

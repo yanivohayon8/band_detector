@@ -109,7 +109,19 @@ class HoughBand():
     def get_representive_line(self):
         return HoughLine(self.get_theta(),self.get_rho())
     
+    def get_width(self):
+        min_rho = 9999999
+        max_rho = -1
 
+        for line in self.hough_lines:
+
+            if line.rho < min_rho:
+                min_rho = line.rho
+            
+            if line.rho > max_rho:
+                max_rho = line.rho
+        
+        return max_rho-min_rho
 
     # def get_width(self):
     #     return abs(self.line1.radius - self.line2.radius)
