@@ -17,7 +17,7 @@ The output of the script includes:
 
 If you use debug mode, you can plot the polygonal representation of the image and the segmentation results. These images would be saved.
 
-![Example images](images-for-demonstration)
+![Example images](https://github.com/yanivohayon8/band_detector/assets/38216201/434820ee-fe13-4274-9784-cec3b3365872)
 
 ## Installation
 
