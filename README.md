@@ -14,6 +14,7 @@ The output of the script includes:
   - `Width`: The width of the band. It is computed as `max_rho - min_rho` among the computed lines of the bands.
   - `Average_color`: In RGB format.
   - `closest_vertices_on_contour`: Contains two metadata: the coordinates in the image plane as well as its indices of the vertices in the polygonal representation of the fragment.
+  - `debug_color`: In the output image, it is the color of the lines that belong to this band.
 
 If you use debug mode, you can plot the polygonal representation of the image and the segmentation results. These images would be saved.
 
