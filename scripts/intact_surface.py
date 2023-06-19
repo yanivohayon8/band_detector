@@ -1,5 +1,6 @@
 intact_images_path = "data/images"
 from src.image_processing.processors import IntactProcessor
+from src.image_processing.utils import line_pixels
 import matplotlib.pyplot as plt
 from src.bands import hough
 from src.bands import two_points
@@ -9,7 +10,7 @@ from src import DEBUG_COLORS
 from src.loader import RdpDataloader
 from src.geometry import PolygonWrapper
 import json
-
+import numpy as np
 
 def compute_edge_map_and_segmentation(img_path,output_file_seg,output_file_edge_map):
     processor = IntactProcessor(img_path)
@@ -34,7 +35,8 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
     
     for band in bands:
         line = band.get_representive_line()
-        points = line.sample_two_points(edge_map.shape)
+        shape_shrink = (edge_map.shape[0]-1,edge_map.shape[1]-1)
+        points = line.sample_two_points(shape_shrink)
         bands_as_lines.append(two_points.TwoPointsLine(points[0],points[1]))
 
     rdp_loader = RdpDataloader(rdp_csv_path)
@@ -45,13 +47,6 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
     con_x,con_y = convex_hull.exterior.xy
     convex_hull_ = PolygonWrapper([(x,y) for x,y in zip (con_x.tolist(),con_y.tolist())])
 
-    # convex_hull_intersections = []
-    # convex_hull_intersected_edges = []
-    # for band_line in bands_as_lines:
-    #     intersec = convex_hull_.find_intersection(band_line.line_string)
-    #     convex_hull_intersections.append(intersec)
-    #     convex_hull_intersected_edges.append(convex_hull_.find_edges_touching_points(intersec))
-
     intersections = []
     intersected_edges = []
     for band_line in bands_as_lines:
@@ -59,7 +54,6 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
         intersections.append(intersec)
         intersected_edges.append(polygon.find_edges_touching_points(intersec))
 
-        
     img_with_bands = img.copy()
     bands_json = []
 
@@ -73,12 +67,18 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
             lines_as_json.append(line.toJson())
 
         band_width = band.get_width()
+        pixels = line_pixels(img,bands_as_lines[i].point1,bands_as_lines[i].point2)
+        pixels = [non_transparent for non_transparent in pixels if np.linalg.norm(non_transparent)>0] 
+
+        avg_color = np.mean(pixels,axis=0)
 
         bands_json.append(
             {
-                "debug_color":band_color,
+                "representive_line": [bands_as_lines[i].point1,bands_as_lines[i].point2],
                 "lines":lines_as_json,
-                "width":int(band_width)
+                "width":int(band_width),
+                "average_color":(int(avg_color[0]),int(avg_color[1]),int(avg_color[2])),
+                "debug_color":band_color
             }
         )
 
@@ -100,9 +100,9 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
                 index_of_closest.append(contour_vertex_index)
                 #print(f"The index of ({x},{y}) is {vertex_index} ",end=",")
         
-        bands_json[i]["closest_vertices"] = {}
-        bands_json[i]["closest_vertices"]["coords"] = coords_of_closest
-        bands_json[i]["closest_vertices"]["indices"] = index_of_closest
+        bands_json[i]["closest_vertices_on_contour"] = {}
+        bands_json[i]["closest_vertices_on_contour"]["coords"] = coords_of_closest
+        bands_json[i]["closest_vertices_on_contour"]["indices"] = index_of_closest
 
     
     '''Write the results'''

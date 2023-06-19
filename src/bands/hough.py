@@ -11,7 +11,6 @@ class HoughLine():
     def __repr__(self) -> str:
         return f"theta={self.theta},radius={self.rho}"
 
-    # old - delete when refactoring
     def sample_two_points(self,img_shape):
         left_border_x=0
         up_border_y = img_shape[1] # because of the image size
