@@ -108,7 +108,7 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,
     
     '''Write the results'''
     image_name = img_path.split("\\")[-1].split(".")[0]
-    cv2.imwrite(output_dir+f"/{image_name}.png",img_with_bands)
+    cv2.imwrite(output_dir+f"/{image_name}.png",cv2.cvtColor(img_with_bands,cv2.COLOR_BGR2RGB))
 
     with open(output_dir+f"{image_name}.json",'w') as fp:
         json.dump(bands_json,fp)
