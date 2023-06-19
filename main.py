@@ -10,7 +10,7 @@ SCRIPT = "detect_straight_line_bands"#"convert_rdp_folder" #"detect_straight_lin
 
 if  __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--script", help="Name of the script to run.") # I use
+    parser.add_argument("--script", help="Name of the script to run.",default="detect_straight_line_bands") # I use
     parser.add_argument("--img_path", help="Image path.") # I use in detect , bamboo
     parser.add_argument("--csv_path", help="CSV path.") # I use in detect, bamboo
     parser.add_argument("--output_path", help="Output path.") # bamboo
@@ -18,6 +18,10 @@ if  __name__ == "__main__":
     parser.add_argument("--dst_folder", help="Destination folder.") # I use in convert  and detect
     parser.add_argument("--images_folder", help="Images folder.") # I use in convert 
     parser.add_argument("--is_debug", action="store_true", help="Debug mode.")
+    parser.add_argument("--minimum_votes", help="minimum_votes.",default=100) # I use in detect , bamboo
+    parser.add_argument("--theta_diff", help="theta_diff.",default=1) # I use in detect , bamboo
+    parser.add_argument("--rho_diff", help="rho_diff.",default=200) # I use in detect , bamboo
+
     args = parser.parse_args()
 
 
@@ -62,7 +66,9 @@ if  __name__ == "__main__":
         convert_rdp_folder(args.src_folder,args.dst_folder,args.images_folder)
 
     elif args.script == "detect_straight_line_bands":
-        detect_straight_line_bands(args.img_path,args.csv_path,args.dst_folder,is_debug=True)
+        detect_straight_line_bands(args.img_path,args.csv_path,args.dst_folder,
+                                   minimum_votes=int(args.minimum_votes),rho_diff=int(args.rho_diff),theta_diff=int(args.theta_diff),
+                                    is_debug=True)
 
     if SCRIPT == "detect_bamboo_lines":
         raise("Under Construction")

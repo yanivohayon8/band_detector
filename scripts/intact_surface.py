@@ -22,7 +22,8 @@ def compute_edge_map_and_segmentation(img_path,output_file_seg,output_file_edge_
     cv2.imwrite(output_file_edge_map,edge_map)
 
 
-def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=100,is_debug=False):
+def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,
+                               minimum_votes=100,theta_diff = 1, rho_diff = 200,is_debug=False):
     #img_path = f"{intact_images_path}/group_{group}/{img_name}"
     processor = IntactProcessor(img_path)
     img = processor.load_img()
@@ -30,7 +31,7 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,minimum_votes=10
     edge_map = processor.get_edge_map()
     hough_lines = hough.detect_hough_lines(edge_map,minimum_votes=minimum_votes)
     band_detector = StraightBandsDetector(hough_lines)
-    bands = band_detector.detect()
+    bands = band_detector.detect(theta_diff=theta_diff,rho_diff=rho_diff)
     bands_as_lines = []
     
     for band in bands:
