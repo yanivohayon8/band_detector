@@ -31,7 +31,9 @@ def segment_kmeans(img, n_clusters=3,colors_pool=None,random_state=0):
     len_ = colors_pool.shape[0]
     segments_colors = np.array([colors_pool[i%len_] for i in range(len(kmeans.cluster_centers_))])
     img_segmented = segments_colors[kmeans.labels_]
-    return img_segmented.reshape(img.shape[0],img.shape[1],img.shape[2])
+    img_segmented = img_segmented.reshape(img.shape[0],img.shape[1],img.shape[2])
+    img_labels = kmeans.labels_.reshape(img.shape[0],img.shape[1])
+    return img_segmented,img_labels
 
 def canny(img,rho1=70,rho2=150):
     return cv2.Canny(img,rho1,rho2)

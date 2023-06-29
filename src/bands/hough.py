@@ -109,18 +109,18 @@ class HoughBand():
         return HoughLine(self.get_theta(),self.get_rho())
     
     def get_width(self):
-        min_rho = 9999999
-        max_rho = -1
+        min_rho = self.hough_lines[0].rho
+        max_rho = self.hough_lines[0].rho
 
         for line in self.hough_lines:
-
+            
             if line.rho < min_rho:
                 min_rho = line.rho
             
             if line.rho > max_rho:
                 max_rho = line.rho
         
-        return max_rho-min_rho
+        return abs(max_rho-min_rho)
 
     # def get_width(self):
     #     return abs(self.line1.radius - self.line2.radius)
