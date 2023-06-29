@@ -27,16 +27,16 @@ if  __name__ == "__main__":
 
     if args.script == "seg_and_edge_map":
 
-        root_path = args.src_folder #f"data/intact_imgs"
-        images = glob.glob(f"{root_path}/**/RGBA/*.png",recursive=True)
+        root_path = args.src_folder #f"data/intact_imgs" #
+        images = glob.glob(f"{root_path}/**/*.png",recursive=True)
 
         for i,img_path in enumerate(images):
             splitted = img_path.split("\\") 
             frag_name = splitted[-1].split(".")[0]
-            group_name = splitted[-3]
+            group_name = splitted[-2]
             directory_path = '/'.join(splitted[:-2])
-            kmeans_path = directory_path + "/segmentation_kmeans"
-            edge_map_path = directory_path + "/edge_map_canny"
+            kmeans_path = f"data/segmentation_kmeans/{group_name}"#directory_path + "/segmentation_kmeans"
+            edge_map_path = f"data/edge_map_canny/{group_name}" #directory_path + "/edge_map_canny"
 
             if not os.path.exists(kmeans_path):
                 os.makedirs(kmeans_path)
@@ -44,8 +44,8 @@ if  __name__ == "__main__":
             if not os.path.exists(edge_map_path):
                 os.makedirs(edge_map_path)
             
-            seg_file = kmeans_path+f"/{frag_name}.png"
             edge_file = edge_map_path+f"/{frag_name}.png"
+            seg_file = kmeans_path+f"/{frag_name}.png"
             print(f"Compute the edge map and segmentation of {group_name}/{frag_name} ({i+1}/{len(images)})")
             compute_edge_map_and_segmentation(img_path,seg_file,edge_file)
 
@@ -66,6 +66,9 @@ if  __name__ == "__main__":
         convert_rdp_folder(args.src_folder,args.dst_folder,args.images_folder)
 
     elif args.script == "detect_straight_line_bands":
+        if not os.path.exists(args.dst_folder):
+            os.makedirs(args.dst_folder)
+
         detect_straight_line_bands(args.img_path,args.csv_path,args.dst_folder,
                                    minimum_votes=int(args.minimum_votes),rho_diff=int(args.rho_diff),theta_diff=int(args.theta_diff),
                                     is_debug=True)
