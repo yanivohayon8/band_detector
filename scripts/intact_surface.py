@@ -164,6 +164,10 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,
 
     fig.savefig(f"{output_dir}/{image_name}_pipeline.png")
 
+
+    # if not is_debug:
+    #     plt.ioff()
+        
     fig2, ax = plt.subplots(1,1)
     ax.set_aspect("equal",adjustable='box')
     poly_x_plot = poly_x + [poly_x[0]]

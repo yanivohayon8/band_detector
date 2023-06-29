@@ -71,7 +71,7 @@ if  __name__ == "__main__":
 
         detect_straight_line_bands(args.img_path,args.csv_path,args.dst_folder,
                                    minimum_votes=int(args.minimum_votes),rho_diff=int(args.rho_diff),theta_diff=int(args.theta_diff),
-                                    is_debug=True)
+                                    is_debug=args.__dict__["is_debug"])
 
     if SCRIPT == "detect_bamboo_lines":
         raise("Under Construction")
