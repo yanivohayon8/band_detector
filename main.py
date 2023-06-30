@@ -18,9 +18,11 @@ if  __name__ == "__main__":
     parser.add_argument("--dst_folder", help="Destination folder.") # I use in convert  and detect
     parser.add_argument("--images_folder", help="Images folder.") # I use in convert 
     parser.add_argument("--is_debug", action="store_true", help="Debug mode.")
-    parser.add_argument("--minimum_votes", help="minimum_votes.",default=100) # I use in detect , bamboo
-    parser.add_argument("--theta_diff", help="theta_diff.",default=1) # I use in detect , bamboo
-    parser.add_argument("--rho_diff", help="rho_diff.",default=200) # I use in detect , bamboo
+    parser.add_argument("--minimum_votes", help="minimum_votes.",default=50) # I use in detect , bamboo
+    parser.add_argument("--theta_diff", help="theta_diff.",default=0.05) # I use in detect , bamboo
+    parser.add_argument("--rho_diff", help="rho_diff.",default=100) # I use in detect , bamboo
+    parser.add_argument("--min_band_width", help="min_band_width.",default=50) # I use in detect , bamboo
+    parser.add_argument("--max_band_theta_variance", help="max_band_theta_variance.",default=0.005) # I use in detect , bamboo
 
     args = parser.parse_args()
 
@@ -70,7 +72,10 @@ if  __name__ == "__main__":
             os.makedirs(args.dst_folder)
 
         detect_straight_line_bands(args.img_path,args.csv_path,args.dst_folder,
-                                   minimum_votes=int(args.minimum_votes),rho_diff=int(args.rho_diff),theta_diff=int(args.theta_diff),
+                                   minimum_votes=int(args.minimum_votes),
+                                   rho_diff=int(args.rho_diff),theta_diff=float(args.theta_diff),
+                                   min_band_width=int(args.min_band_width),
+                                   max_band_theta_variance=float(args.max_band_theta_variance),
                                     is_debug=args.__dict__["is_debug"])
 
     if SCRIPT == "detect_bamboo_lines":

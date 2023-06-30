@@ -23,7 +23,10 @@ def compute_edge_map_and_segmentation(img_path,output_file_seg,output_file_edge_
 
 
 def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,
-                               minimum_votes=100,theta_diff = 1, rho_diff = 200,min_band_width=50,is_debug=False):
+                               minimum_votes=100,theta_diff = 1, rho_diff = 200,
+                               min_band_width=50,
+                               max_band_theta_variance=0.2,
+                               is_debug=False):
     #img_path = f"{intact_images_path}/group_{group}/{img_name}"
     processor = IntactProcessor(img_path)
     img = processor.load_img()
@@ -32,11 +35,44 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,
     edge_map = processor.get_edge_map(img_masked)
     hough_lines = hough.detect_hough_lines(edge_map,minimum_votes=minimum_votes)
     band_detector = StraightBandsDetector(hough_lines)
-    bands_ = band_detector.detect(theta_diff=theta_diff,rho_diff=rho_diff)
-    bands = [band for band in bands_ if band.get_width() >= min_band_width]
+    raw_bands = band_detector.detect(theta_diff=theta_diff,rho_diff=rho_diff)
+    bands = []
+
+    for band in raw_bands:
+        width = band.get_width()
+        var = band.get_theta_variance()
+
+        
+        line = band.get_representive_line()
+        shape_shrink = (edge_map.shape[0]-1,edge_map.shape[1]-1)
+        points = line.sample_two_points(shape_shrink)
+
+        pixels = line_pixels(img,points[0],points[1])
+        pixels = [non_transparent for non_transparent in pixels if np.linalg.norm(non_transparent)>0] 
+        
+        channels_variance = np.var(pixels,axis=0)
+
+        print(f"Detected potential band:")
+        print(f"\t num of lines {len(band.hough_lines)}")
+        print(f"\t width {width}")
+        print(f"\t theta variance {var}")
+        print(f"\t color variance ({channels_variance[0]},{channels_variance[1]},{channels_variance[2]})")
+
+
+        if  width < min_band_width:
+            continue
+
+        if var > max_band_theta_variance:
+            continue
+
+        if channels_variance[0] > 70000 or channels_variance[1]>70000 or channels_variance[2] > 70000:
+            continue
+
+        bands.append(band)
         
     bands_as_lines = []
 
+    
     for band in bands:
         line = band.get_representive_line()
         shape_shrink = (edge_map.shape[0]-1,edge_map.shape[1]-1)
@@ -75,12 +111,15 @@ def detect_straight_line_bands(img_path,rdp_csv_path,output_dir,
         pixels = [non_transparent for non_transparent in pixels if np.linalg.norm(non_transparent)>0] 
 
         avg_color = np.mean(pixels,axis=0)
+        var_color = np.var(pixels,axis=0)
 
         bands_json.append(
             {
                 "representive_line": [bands_as_lines[i].point1,bands_as_lines[i].point2],
                 "lines":lines_as_json,
                 "width":int(band_width),
+                "theta_variance":str(band.get_theta_variance()),
+                "color_variance":(str(var_color[0]),str(var_color[1]),str(var_color[2])),
                 "average_color":(int(avg_color[0]),int(avg_color[1]),int(avg_color[2])),
                 "debug_color":band_color
             }

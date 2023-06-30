@@ -33,10 +33,10 @@ class IntactProcessor(Processor):
         self.masked_img = masked_img
         return masked_img
     
-    def get_edge_map(self,img,rho1=70,rho2=150):
+    def get_edge_map(self,img,rho1=70,rho2=210):
         # img_segmented_gray = cv2.cvtColor(self.img_color_segmented,cv2.COLOR_RGB2GRAY)
         img_segmented_gray = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
-        return utils.canny(img_segmented_gray,rho1=rho1,rho2=rho2)
+        return utils.canny(img_segmented_gray,rho1=rho1,rho2=rho2) 
     
 class BamboolinesProcessor(Processor):
 

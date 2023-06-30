@@ -122,6 +122,9 @@ class HoughBand():
         
         return abs(max_rho-min_rho)
 
+    def get_theta_variance(self):
+        thetas = [line.theta for line in self.hough_lines]
+        return np.var(thetas)
     # def get_width(self):
     #     return abs(self.line1.radius - self.line2.radius)
     
