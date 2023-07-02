@@ -11,6 +11,8 @@ SCRIPT = "detect_straight_line_bands"#"convert_rdp_folder" #"detect_straight_lin
 if  __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--script", help="Name of the script to run.",default="detect_straight_line_bands") # I use
+    parser.add_argument("--group", help="",default="-1") # I use
+    parser.add_argument("--fragment_id", help="",default="None") # I use
     parser.add_argument("--img_path", help="Image path.") # I use in detect , bamboo
     parser.add_argument("--csv_path", help="CSV path.") # I use in detect, bamboo
     parser.add_argument("--output_path", help="Output path.") # bamboo
@@ -68,6 +70,12 @@ if  __name__ == "__main__":
         convert_rdp_folder(args.src_folder,args.dst_folder,args.images_folder)
 
     elif args.script == "detect_straight_line_bands":
+
+        if args.group != "-1" and args.fragment_id != "none":
+            args.dst_folder = f"data/bands/group_{args.group}/{args.fragment_id}/"
+            args.csv_path = f"data/rdp_segments/group_{args.group}\\{args.fragment_id}_intact_mesh.csv"
+            args.img_path = f"data/group_{args.group}/intact_images\\{args.fragment_id}_intact_mesh.png"
+
         if not os.path.exists(args.dst_folder):
             os.makedirs(args.dst_folder)
 
