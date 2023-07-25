@@ -1,0 +1,36 @@
+
+
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00571 --group  62 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00596 --group  64 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00601 --group  64 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00602 --group  64 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00607 --group  64 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00608 --group  64 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00609 --group  64 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00610 --group  64 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00614 --group  65 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00621 --group  65 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00622 --group  65 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00623 --group  65 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00625 --group  65 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00628 --group  66 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00629 --group  66 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00667 --group  68 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00668 --group  68 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00669 --group  68 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00670 --group  68 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00672 --group  68 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00674 --group  68 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00723 --group  70 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00735 --group  71 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00736 --group  71 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00737 --group  71 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00738 --group  71 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00739 --group  71 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00748 --group  72 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00750 --group  72 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00756 --group  72 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00759 --group  72 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00760 --group  72 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00762 --group  73 
+.\.venv\Scripts\python.exe main.py --fragment_id RPf_00765 --group  73 
