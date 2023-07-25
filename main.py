@@ -1,9 +1,11 @@
 from scripts.intact_surface import detect_straight_line_bands,compute_edge_map_and_segmentation
-from scripts.write_csv_to_springs import convert_rdp_folder
+from scripts.write_csv_to_springs import convert_rdp_folder,rdp_to_csv
 from scripts.opposite_surface import detect_bamboo_lines
+from scripts.visual_postprocessing import draw_line_on_image
 import os
 import glob
 import argparse
+import re
 
 
 SCRIPT = "detect_straight_line_bands"#"convert_rdp_folder" #"detect_straight_line_bands" #"detect_bamboo_lines"
@@ -12,7 +14,7 @@ if  __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--script", help="Name of the script to run.",default="detect_straight_line_bands") # I use
     parser.add_argument("--group", help="",default="-1") # I use
-    parser.add_argument("--fragment_id", help="",default="None") # I use
+    parser.add_argument("--fragment_id", help="",default="all") # I use
     parser.add_argument("--img_path", help="Image path.") # I use in detect , bamboo
     parser.add_argument("--csv_path", help="CSV path.") # I use in detect, bamboo
     parser.add_argument("--output_path", help="Output path.") # bamboo
@@ -20,10 +22,10 @@ if  __name__ == "__main__":
     parser.add_argument("--dst_folder", help="Destination folder.") # I use in convert  and detect
     parser.add_argument("--images_folder", help="Images folder.") # I use in convert 
     parser.add_argument("--is_debug", action="store_true", help="Debug mode.")
-    parser.add_argument("--minimum_votes", help="minimum_votes.",default=50) # I use in detect , bamboo
+    parser.add_argument("--minimum_votes", help="minimum_votes.",default=100) # I use in detect , bamboo
     parser.add_argument("--theta_diff", help="theta_diff.",default=0.05) # I use in detect , bamboo
     parser.add_argument("--rho_diff", help="rho_diff.",default=100) # I use in detect , bamboo
-    parser.add_argument("--min_band_width", help="min_band_width.",default=50) # I use in detect , bamboo
+    parser.add_argument("--min_band_width", help="min_band_width.",default=10) # I use in detect , bamboo
     parser.add_argument("--max_band_theta_variance", help="max_band_theta_variance.",default=0.005) # I use in detect , bamboo
 
     args = parser.parse_args()
@@ -69,22 +71,88 @@ if  __name__ == "__main__":
 
         convert_rdp_folder(args.src_folder,args.dst_folder,args.images_folder)
 
+    elif args.script == "rdp_to_csv_per_piece":
+        
+        def single_piece(group,fragment):
+            rdp_csv_path = f"data/rdp_segments/group_{group}\\{fragment}_intact_mesh.csv"
+            img_path =f"../../RGBA/group_{group}\\{fragment}_intact_mesh.png" #f"data/group_{group}/intact_images\\{fragment_id}_intact_mesh.png"
+            dst_working_dir = "C:\\Users\\97254\\Desktop\\msc\\RePAIR\\projects\\springs_assembler_sfml\\2D_puzzle_springs_assembler\\data\\RePAIR"
+            dst_csv_folder = dst_working_dir+f"\\group_{group}\\csv"
+            dst_img_folder = dst_working_dir+f"\\group_{group}\\images"
+
+            if not os.path.exists(dst_csv_folder):
+                os.makedirs(dst_csv_folder)
+            
+            if not os.path.exists(dst_img_folder):
+                os.makedirs(dst_img_folder)
+            
+            dst_csv_file = dst_csv_folder+f"\\{fragment}_intact_mesh.csv"
+            dst_img_file = dst_img_folder+f"\\{fragment}_intact_mesh.png"
+
+            rdp_to_csv(rdp_csv_path,img_path,dst_csv_file,dst_img_file)
+        
+        if args.group != "-1":
+            
+            if args.fragment_id == "all":
+                # RPf_00344_intact_mesh.png.csv an example of csv
+                fragments_ids = [re.search("RPf_\d{5}",csv_name).group() for csv_name in glob.glob(f"data/rdp_segments/group_{args.group}/*.csv")] 
+                [single_piece(args.group,fragment_id) for fragment_id in fragments_ids]
+            else:
+                single_piece(args.group,args.fragment_id)
+        
+
     elif args.script == "detect_straight_line_bands":
+        
+        def run_on_single_piece(group,fragment_id):
+            dst_folder = f"data/bands/group_{group}/{fragment_id}/"
+            csv_path = f"data/rdp_segments/group_{group}\\{fragment_id}_intact_mesh.csv"
+            img_path =f"../../RGBA/group_{group}\\{fragment_id}_intact_mesh.png" #f"data/group_{group}/intact_images\\{fragment_id}_intact_mesh.png"
 
-        if args.group != "-1" and args.fragment_id != "none":
-            args.dst_folder = f"data/bands/group_{args.group}/{args.fragment_id}/"
-            args.csv_path = f"data/rdp_segments/group_{args.group}\\{args.fragment_id}_intact_mesh.csv"
-            args.img_path = f"data/group_{args.group}/intact_images\\{args.fragment_id}_intact_mesh.png"
+            if not os.path.exists(dst_folder):
+                os.makedirs(dst_folder)
 
-        if not os.path.exists(args.dst_folder):
-            os.makedirs(args.dst_folder)
+            print(f"***** Running on fragment {fragment_id} in group {group} ****")
+            detect_straight_line_bands(img_path,csv_path,dst_folder,
+                                    minimum_votes=int(args.minimum_votes),
+                                    rho_diff=int(args.rho_diff),theta_diff=float(args.theta_diff),
+                                    min_band_width=int(args.min_band_width),
+                                    max_band_theta_variance=float(args.max_band_theta_variance),
+                                        is_debug=args.__dict__["is_debug"])
+        
+        if args.group != "-1":
+            
+            if args.fragment_id == "all":
+                # RPf_00344_intact_mesh.png.csv an example of csv
+                fragments_ids = [re.search("RPf_\d{5}",csv_name).group() for csv_name in glob.glob(f"data/rdp_segments/group_{args.group}/*.csv")] 
+                [run_on_single_piece(args.group,fragment_id) for fragment_id in fragments_ids]
+            else:
+                run_on_single_piece(args.group,args.fragment_id)
+        else:
+            detect_straight_line_bands(args.img_path,args.csv_path,args.dst_folder,
+                                    minimum_votes=int(args.minimum_votes),
+                                    rho_diff=int(args.rho_diff),theta_diff=float(args.theta_diff),
+                                    min_band_width=int(args.min_band_width),
+                                    max_band_theta_variance=float(args.max_band_theta_variance),
+                                        is_debug=args.__dict__["is_debug"])
 
-        detect_straight_line_bands(args.img_path,args.csv_path,args.dst_folder,
-                                   minimum_votes=int(args.minimum_votes),
-                                   rho_diff=int(args.rho_diff),theta_diff=float(args.theta_diff),
-                                   min_band_width=int(args.min_band_width),
-                                   max_band_theta_variance=float(args.max_band_theta_variance),
-                                    is_debug=args.__dict__["is_debug"])
+        
+    elif args.script == "draw_representive_line":
+        def single_piece(group,fragment_id):
+            # group = args.group
+            # fragment_id = args.fragment_id
+            base_folder= f"data/bands/group_{group}/{fragment_id}"
+            json_file = f"{base_folder}/{fragment_id}_intact_mesh.json"
+            input_image = f"../../RGBA/group_{group}\\{fragment_id}_intact_mesh.png"
+            output_image = f"{base_folder}/{fragment_id}_intact_mesh.png"
+            draw_line_on_image(json_file,input_image,output_image)
+        
+        if args.group != "-1":
+            if args.fragment_id == "all":
+                # RPf_00344_intact_mesh.png.csv an example of csv
+                fragments_ids = [re.search("RPf_\d{5}",csv_name).group() for csv_name in glob.glob(f"data/rdp_segments/group_{args.group}/*.csv")] 
+                [single_piece(args.group,fragment_id) for fragment_id in fragments_ids]
+            else:
+                single_piece(args.group,args.fragment_id)
 
     if SCRIPT == "detect_bamboo_lines":
         raise("Under Construction")
