@@ -16,6 +16,9 @@ def convert_rdp_folder(src_folder,dst_folder,images_folder,crop_margin = 32, is_
         dst_file_path - the path of the puzzle files such as pieces and the images
         images_folder - where are the images
         crop_margin - a space given from all size while preparing the image for the spring mass sfml graphics... 32 is default because the original image is 2000x2000 and Sinem outputs rdp is 2064x2064...
+
+
+        This saves all the coordinates in pieces.csv file per group (Convex Drawing style for known puzzle)
     '''
     pieces_file_path = dst_folder + "/pieces.csv"
     convex_hull_file_path = dst_folder + "/convex_hull.csv"
@@ -113,3 +116,55 @@ def convert_rdp_folder(src_folder,dst_folder,images_folder,crop_margin = 32, is_
 
 
 
+def rdp_to_csv(rdp_csv_file,image_path,
+               dst_csv_path,dst_image_path,crop_margin = 0):
+    '''
+        Save per piece a file containing its coordinates
+    '''    
+    
+    fragment_name = rdp_csv_file.split("\\")[-1].split(".")[0]
+    print(f"Processing fragment {fragment_name}")
+
+    rdp_loader = RdpDataloader(rdp_csv_file)
+    rdp_loader.load()
+    polygon_coords = rdp_loader.get_polygon_coords()
+
+    x_min = 99999
+    y_min = 99999
+    x_max = 0
+    y_max = 0
+
+    xs = []
+    ys = []
+    ids = []
+
+    for coord in polygon_coords:
+
+        if coord[0]<x_min:
+            x_min = coord[0]
+
+        if coord[0] > x_max:
+            x_max = coord[0]
+
+        if coord[1]<y_min:
+            y_min = coord[1]
+        
+        if coord[1] > y_max:
+            y_max = coord[1]
+    
+    for coord in polygon_coords:
+        xs.append(coord[0]-x_min)
+        ys.append(coord[1]-y_min)
+        ids.append(fragment_name)
+    
+    img = Image.open(image_path)
+    cropped_img = img.crop((x_min-crop_margin,y_min-crop_margin,x_max+crop_margin,y_max+crop_margin))
+    cropped_img.save(dst_image_path)
+
+    df_pieces = pd.DataFrame({
+        "piece":ids,
+        "x":xs,
+        "y":ys
+    })
+
+    df_pieces.to_csv(dst_csv_path,index=False)
