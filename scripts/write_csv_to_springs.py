@@ -117,7 +117,7 @@ def convert_rdp_folder(src_folder,dst_folder,images_folder,crop_margin = 32, is_
 
 
 def rdp_to_csv(rdp_csv_file,image_path,
-               dst_csv_path,dst_image_path,crop_margin = 0):
+               dst_csv_path,dst_image_path,crop_margin = 32): # crop_margin =0 or 32
     '''
         Save per piece a file containing its coordinates
     '''    

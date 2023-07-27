@@ -77,8 +77,8 @@ if  __name__ == "__main__":
             rdp_csv_path = f"data/rdp_segments/group_{group}\\{fragment}_intact_mesh.csv"
             img_path =f"../../RGBA/group_{group}\\{fragment}_intact_mesh.png" #f"data/group_{group}/intact_images\\{fragment_id}_intact_mesh.png"
             dst_working_dir = "C:\\Users\\97254\\Desktop\\msc\\RePAIR\\projects\\springs_assembler_sfml\\2D_puzzle_springs_assembler\\data\\RePAIR"
-            dst_csv_folder = dst_working_dir+f"\\group_{group}\\csv"
-            dst_img_folder = dst_working_dir+f"\\group_{group}\\images"
+            dst_csv_folder = dst_working_dir+f"\\csv" #dst_working_dir+f"\\group_{group}\\csv"
+            dst_img_folder = dst_working_dir+f"\\images"#dst_working_dir+f"\\group_{group}\\images"
 
             if not os.path.exists(dst_csv_folder):
                 os.makedirs(dst_csv_folder)

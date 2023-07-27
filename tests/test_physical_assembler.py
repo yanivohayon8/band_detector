@@ -1,5 +1,5 @@
 import unittest
-from src.pairwiser.physical_assemler import PhysicalAssembler
+from src.assembler.physical_assemler import PhysicalAssembler
 from src.my_http_client import SpringsHTTPClient
 
 class TestPhysicalAssembler(unittest.TestCase):
